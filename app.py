@@ -1,272 +1,141 @@
 from flask import Flask, request, jsonify
-from company_scrapper import fetch_jobs
+from company_scrapper import fetch_jobs_wellfound,format_reponse
+import random
 
 app = Flask(__name__)
 
 JOBS_BACKUP = [
     {
-        "Adyen": [
-            {
-                "link": "https://wellfound.com/jobs/2951408-team-lead-solution-engineering",
-                "title": "Team Lead, Solution Engineering"
-            }
-        ],
-        "Astranis": [
-            {
-                "link": "https://wellfound.com/jobs/2612927-senior-devops-engineer",
-                "title": "Senior DevOps Engineer"
-            }
-        ],
-        "Classy.org": [
-            {
-                "link": "https://wellfound.com/jobs/2956470-manager-software-engineering",
-                "title": "Manager, Software Engineering"
-            }
-        ],
-        "Feathery": [
-            {
-                "link": "https://wellfound.com/jobs/2886149-deployed-engineer",
-                "title": "Deployed Engineer"
-            }
-        ],
-        "HealthSherpa": [
-            {
-                "link": "https://wellfound.com/jobs/2956039-engineering-manager",
-                "title": "Engineering Manager"
-            }
-        ],
-        "Justworks": [
-            {
-                "link": "https://wellfound.com/jobs/2954566-senior-network-engineer",
-                "title": "Senior Network Engineer "
-            }
-        ],
-        "MongoDB": [
-            {
-                "link": "https://wellfound.com/jobs/2956299-senior-site-reliability-engineer",
-                "title": "Senior Site Reliability Engineer"
-            }
-        ],
-        "Nuna": [
-            {
-                "link": "https://wellfound.com/jobs/2954590-senior-software-engineer-ai",
-                "title": "Senior Software Engineer, AI"
-            }
-        ],
-        "Parafin": [
-            {
-                "link": "https://wellfound.com/jobs/2950719-staff-software-engineer-lending-products",
-                "title": "Staff Software Engineer, Lending Products"
-            }
-        ],
-        "Pendo": [
-            {
-                "link": "https://wellfound.com/jobs/2956426-front-end-engineer-guides",
-                "title": "Front End Engineer: Guides"
-            }
-        ],
-        "Qventus": [
-            {
-                "link": "https://wellfound.com/jobs/2950463-sr-data-platform-engineer",
-                "title": "Sr. Data Platform Engineer"
-            }
-        ],
-        "Roblox": [
-            {
-                "link": "https://wellfound.com/jobs/2955098-technical-director-generative-ai",
-                "title": "Technical Director - Generative AI"
-            }
-        ],
-        "SeatGeek": [
-            {
-                "link": "https://wellfound.com/jobs/2954887-lead-product-manager-cloud-and-data-products",
-                "title": "Lead Product Manager - Cloud and Data Products"
-            }
-        ],
-        "Snapdocs": [
-            {
-                "link": "https://wellfound.com/jobs/2950303-staff-security-engineer",
-                "title": "Staff Security Engineer"
-            }
-        ],
-        "Tanium": [
-            {
-                "link": "https://wellfound.com/jobs/2940074-servicenow-technical-architect",
-                "title": "ServiceNow Technical Architect"
-            }
-        ],
-        "Thumbtack": [
-            {
-                "link": "https://wellfound.com/jobs/2954938-lead-data-scientist-product",
-                "title": "Lead Data Scientist, Product"
-            }
-        ],
-        "Train Fitness": [
-            {
-                "link": "https://wellfound.com/jobs/2954846-senior-backend-engineer",
-                "title": "Senior Backend Engineer"
-            }
-        ],
-        "Up&Up": [
-            {
-                "link": "https://wellfound.com/jobs/2955646-technical-product-manager",
-                "title": "Technical Product Manager"
-            }
-        ],
-        "Wunderkind (formerly BounceX)": [
-            {
-                "link": "https://wellfound.com/jobs/2954557-senior-business-development-director-strategic",
-                "title": "Senior Business Development Director, Strategic"
-            }
-        ],
-        "Wynd Labs": [
-            {
-                "link": "https://wellfound.com/jobs/2956859-embedded-systems-engineer",
-                "title": "Embedded Systems Engineer"
-            }
-        ]
+        "name": "Train Fitness",
+        "title": "Senior Backend Engineer",
+        "link": "https://wellfound.com/jobs/2954846-senior-backend-engineer"
     },
     {
-        "Arcade": [
-            {
-                "link": "https://wellfound.com/jobs/2878172-engineering-manager",
-                "title": "Engineering Manager"
-            }
-        ],
-        "Arena ": [
-            {
-                "link": "https://wellfound.com/jobs/684391-machine-learning-scientist",
-                "title": "Machine Learning Scientist"
-            }
-        ],
-        "Bezi": [
-            {
-                "link": "https://wellfound.com/jobs/2849415-software-engineer-backend-security",
-                "title": "Software Engineer (Backend, Security)"
-            }
-        ],
-        "Classy.org": [
-            {
-                "link": "https://wellfound.com/jobs/2956470-manager-software-engineering",
-                "title": "Manager, Software Engineering"
-            }
-        ],
-        "Cruise": [
-            {
-                "link": "https://wellfound.com/jobs/2956503-senior-python-build-engineer-ii-build-platform",
-                "title": "Senior Python Build Engineer II, Build Platform"
-            }
-        ],
-        "Faire": [
-            {
-                "link": "https://wellfound.com/jobs/2846195-data-scientist-search-recommendation-machine-learning",
-                "title": "Data Scientist - Search & Recommendation, Machine Learning "
-            }
-        ],
-        "Fictiv": [
-            {
-                "link": "https://wellfound.com/jobs/2945036-supplier-quality-engineer",
-                "title": "Supplier Quality Engineer"
-            }
-        ],
-        "HubSpot": [
-            {
-                "link": "https://wellfound.com/jobs/2956289-technical-lead-frontend-crm",
-                "title": "Technical Lead, Frontend, CRM "
-            }
-        ],
-        "Instabase": [
-            {
-                "link": "https://wellfound.com/jobs/2937862-forward-deployed-solutions-engineer-federal",
-                "title": "Forward Deployed Solutions Engineer (Federal)"
-            }
-        ],
-        "Justworks": [
-            {
-                "link": "https://wellfound.com/jobs/2954566-senior-network-engineer",
-                "title": "Senior Network Engineer "
-            }
-        ],
-        "Notion": [
-            {
-                "link": "https://wellfound.com/jobs/2665332-software-engineer-web-performance",
-                "title": "Software Engineer, Web Performance"
-            }
-        ],
-        "Photon Health": [
-            {
-                "link": "https://wellfound.com/jobs/2953396-software-engineer",
-                "title": "Software Engineer"
-            }
-        ],
-        "RapidSOS": [
-            {
-                "link": "https://wellfound.com/jobs/2951300-business-development-partnership-manager",
-                "title": "Business Development & Partnership Manager"
-            }
-        ],
-        "Ripple": [
-            {
-                "link": "https://wellfound.com/jobs/2952581-senior-software-engineer-data-liquidity",
-                "title": "Senior Software Engineer, Data (Liquidity)"
-            }
-        ],
-        "Skydio": [
-            {
-                "link": "https://wellfound.com/jobs/2953155-flight-test-engineer",
-                "title": "Flight Test Engineer"
-            }
-        ],
-        "Snapdocs": [
-            {
-                "link": "https://wellfound.com/jobs/2950303-staff-security-engineer",
-                "title": "Staff Security Engineer"
-            }
-        ],
-        "Tanium": [
-            {
-                "link": "https://wellfound.com/jobs/2940074-servicenow-technical-architect",
-                "title": "ServiceNow Technical Architect"
-            }
-        ],
-        "Up&Up": [
-            {
-                "link": "https://wellfound.com/jobs/2955646-technical-product-manager",
-                "title": "Technical Product Manager"
-            }
-        ],
-        "UseBump.com": [
-            {
-                "link": "https://wellfound.com/jobs/2843732-vp-of-engineering",
-                "title": "VP of Engineering"
-            }
-        ],
-        "Volt Labs": [
-            {
-                "link": "https://wellfound.com/jobs/2855754-product-software-engineer",
-                "title": "Product & Software Engineer"
-            }
-        ]
+        "name": "BigID",
+        "title": "QA Automation Engineer",
+        "link": "https://wellfound.com/jobs/2955114-qa-automation-engineer"
+    },
+    {
+        "name": "CHA\u0398S AI Research Co.",
+        "title": "Senior AI Researcher",
+        "link": "https://wellfound.com/jobs/2955089-senior-ai-researcher"
+    },
+    {
+        "name": "Collinear.ai",
+        "title": "Sr. Machine Learning Engineer (LLM)",
+        "link": "https://wellfound.com/jobs/2952888-sr-machine-learning-engineer-llm"
+    },
+    {
+        "name": "Entrupy",
+        "title": "Senior Full Stack Engineer(Knowledge)",
+        "link": "https://wellfound.com/jobs/2955988-senior-full-stack-engineer-knowledge"
+    },
+    {
+        "name": "AlphaSense",
+        "title": "Senior Automation QA Engineer",
+        "link": "https://wellfound.com/jobs/2955175-senior-automation-qa-engineer"
+    },
+    {
+        "name": "Testlio",
+        "title": "Sr Software Quality Engineer (XCUI, Espresso)",
+        "link": "https://wellfound.com/jobs/2956187-sr-software-quality-engineer-xcui-espresso"
+    },
+    {
+        "name": "SquaredLab",
+        "title": "Senior Blockchain Dev (DeFi)",
+        "link": "https://wellfound.com/jobs/2954815-senior-blockchain-dev-defi"
+    },
+    {
+        "name": "AURA",
+        "title": "DevOps Engineer",
+        "link": "https://wellfound.com/jobs/2669366-devops-engineer"
+    },
+    {
+        "name": "HashiCorp",
+        "title": "Sr. Support Engineer, Vault",
+        "link": "https://wellfound.com/jobs/2954052-sr-support-engineer-vault"
+    },
+    {
+        "name": "ThoughtSpot",
+        "title": "Senior Product Manager",
+        "link": "https://wellfound.com/jobs/2946448-senior-product-manager"
+    },
+    {
+        "name": "Fireflies.ai ",
+        "title": "Senior Backend Engineer (Deep Learning team)",
+        "link": "https://wellfound.com/jobs/2872929-senior-backend-engineer-deep-learning-team"
+    },
+    {
+        "name": "Stripe",
+        "title": "Software Engineer, RFA",
+        "link": "https://wellfound.com/jobs/2952674-software-engineer-rfa"
+    },
+    {
+        "name": "MongoDB",
+        "title": "Manager, Technical Services",
+        "link": "https://wellfound.com/jobs/2942901-manager-technical-services"
+    },
+    {
+        "name": "6sense",
+        "title": "Software Engineer II, Data",
+        "link": "https://wellfound.com/jobs/2940779-software-engineer-ii-data"
+    },
+    {
+        "name": "Zemoso Technologies",
+        "title": "Node js Developer",
+        "link": "https://wellfound.com/jobs/2956915-node-js-developer"
+    },
+    {
+        "name": "Coupang",
+        "title": "Staff System Engineer",
+        "link": "https://wellfound.com/jobs/2956399-staff-system-engineer"
+    },
+    {
+        "name": "Timescale",
+        "title": "Database Support Engineer (Weekends)",
+        "link": "https://wellfound.com/jobs/2947195-database-support-engineer-weekends"
+    },
+    {
+        "name": "Icertis",
+        "title": "Senior Software Engineer - Testing (Manual + Automation) - Data Science & AI",
+        "link": "https://wellfound.com/jobs/2953013-senior-software-engineer-testing-manual-automation-data-science-ai"
+    },
+    {
+        "name": "Autonomize",
+        "title": "Senior MLOps Engineer",
+        "link": "https://wellfound.com/jobs/2957077-senior-mlops-engineer"
     }
 ]
 
-
 @app.route('/', methods=['GET', 'POST'])
 def fetchJobs():
-    if request.method == 'POST':
+    if request.method == 'GET':
         location = request.args.get('location')
         if not location:
             return "No location provided"
         else:
             max_pages = 2
             job_list = []
-            for i in range(1, max_pages + 1):
-                jobs = fetch_jobs(location, "", i)
-                if not jobs:
-                    break
-                job_list.append(jobs)
+            try : 
+                for i in range(1, max_pages + 1):
+                    job_data = fetch_jobs_wellfound(location, "", i)
+                    if job_data : 
+                        job_data = job_data
+                    else : 
+                        job_data = JOBS_BACKUP
+                    jobs = format_reponse(job_data)
+                    if not jobs:
+                        break
+                    job_list.append(jobs)
+                
+                for job in job_list : 
+                    print(job)
+                return job_list if job_list else JOBS_BACKUP
 
-            return jsonify(job_list) if job_list else JOBS_BACKUP
+            except : 
+                return JOBS_BACKUP
+            
+            
 
     return 'Hello World!'
 
